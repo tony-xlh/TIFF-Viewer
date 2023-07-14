@@ -11,6 +11,10 @@
   </style>
 </head>
 <body>
+  <label>
+    Select a TIFF file to load:
+    <input type="file" id="file" onchange="tiffSelected();" accept=".tiff,.tif"/>
+  </label>
   <div id="dwtcontrolContainer"></div>
   <script type="text/javascript">
     let DWObject;
@@ -27,6 +31,14 @@
         DWObject.SetViewMode(1,1);
       });
       Dynamsoft.DWT.Load();
+    }
+
+    function tiffSelected(){
+      let files = document.getElementById("file").files;
+      if (files.length>0 && DWObject) {
+        let file = files[0];
+        DWObject.LoadImageFromBinary(file);
+      }
     }
   </script>
 </body>
