@@ -8,13 +8,25 @@
       width: 270px;
       height: 360px;
     }
+    ol {
+      padding-left: 1em;
+    }
   </style>
 </head>
 <body>
-  <label>
-    Select a TIFF file to load:
-    <input type="file" id="file" onchange="tiffSelected();" accept=".tiff,.tif"/>
-  </label>
+  <ol>
+    <li>
+      <label>
+        Select a TIFF file to load:
+        <input type="file" id="file" onchange="tiffSelected();" accept=".tiff,.tif"/>
+      </label>
+    </li>
+    <li>
+      <input type="text" id="url" value="ycbcr.tif"/>
+      <button onclick="loadRemoteImage();">Load a remote image</button>
+      <span id="status"></span>
+    </li>
+  </ol>
   <div id="dwtcontrolContainer"></div>
   <script type="text/javascript">
     let DWObject;
@@ -42,17 +54,40 @@
     function tiffSelected(){
       let files = document.getElementById("file").files;
       if (files.length>0 && DWObject) {
-        DWObject.RemoveAllImages();
         let file = files[0];
-        DWObject.LoadImageFromBinary(file,
-          function () {
-            console.log("success");
-          },
-          function (errorCode, errorString) {
-            console.log(errorString);
-          }
-        );
+        loadTiff(file);
       }
+    }
+
+    function loadTiff(file){
+      DWObject.RemoveAllImages();
+      DWObject.LoadImageFromBinary(file,
+        function () {
+          console.log("success");
+        },
+        function (errorCode, errorString) {
+          console.log(errorString);
+        }
+      );
+    }
+
+    function loadRemoteImage(){
+      let status = document.getElementById("status");
+      if (status.innerText) {
+        return;
+      }
+      status.innerText = "Downloading...";
+      let xhr = new XMLHttpRequest();
+      xhr.responseType = 'arraybuffer';
+      xhr.open('GET', document.getElementById("url").value);
+      xhr.onload = function (e) {
+        status.innerText = "";
+        loadTiff(xhr.response);
+      };
+      xhr.onerror = function(){
+        status.innerText = "Error";
+      }
+      xhr.send();
     }
   </script>
 </body>
