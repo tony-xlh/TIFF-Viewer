@@ -15,13 +15,25 @@
       width: calc(100% - 20px);
       padding: 10px;
     }
+
+    ol {
+      padding-left: 1em;
+    }
   </style>
 </head>
 <body>
-  <label>
-    Select a TIFF file to load:
-    <input type="file" id="file" onchange="tiffSelected();" accept=".tiff,.tif"/>
-  </label>
+  <ol>
+    <li>
+      <label>
+        Select a TIFF file to load:
+        <input type="file" id="file" onchange="tiffSelected();" accept=".tiff,.tif"/>
+      </label>
+    </li>
+    <li>
+      <input type="text" id="url" value="ycbcr.tif"/>
+      <button onclick="loadRemoteImage();">Load a remote image</button>
+    </li>
+  </ol>
   <div class="tiff-viewer"></div>
   <script type="text/javascript">
     let DWObject;
@@ -47,18 +59,22 @@
     function tiffSelected(){
       let files = document.getElementById("file").files;
       if (files.length>0 && DWObject) {
-        DWObject.RemoveAllImages();
         let file = files[0];
-        DWObject.LoadImageFromBinary(file,
-          function () {
-            console.log("success");
-            displayImagesInBuffer();
-          },
-          function (errorCode, errorString) {
-            console.log(errorString);
-          }
-        );
+        loadTiff(file);
       }
+    }
+
+    function loadTiff(file){
+      DWObject.RemoveAllImages();
+      DWObject.LoadImageFromBinary(file,
+        function () {
+          console.log("success");
+          displayImagesInBuffer();
+        },
+        function (errorCode, errorString) {
+          console.log(errorString);
+        }
+      );
     }
 
     async function displayImagesInBuffer(){
@@ -89,6 +105,16 @@
           }
         );
       })
+    }
+
+    function loadRemoteImage(){
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'arraybuffer';
+      xhr.open('GET', document.getElementById("url").value);
+      xhr.onload = function (e) {
+        loadTiff(xhr.response);
+      };
+      xhr.send();
     }
   </script>
 </body>
