@@ -32,6 +32,7 @@
     <li>
       <input type="text" id="url" value="ycbcr.tif"/>
       <button onclick="loadRemoteImage();">Load a remote image</button>
+      <span id="status"></span>
     </li>
   </ol>
   <div class="tiff-viewer"></div>
@@ -108,12 +109,21 @@
     }
 
     function loadRemoteImage(){
-      var xhr = new XMLHttpRequest();
+      let status = document.getElementById("status");
+      if (status.innerText) {
+        return;
+      }
+      status.innerText = "Downloading...";
+      let xhr = new XMLHttpRequest();
       xhr.responseType = 'arraybuffer';
       xhr.open('GET', document.getElementById("url").value);
       xhr.onload = function (e) {
+        status.innerText = "";
         loadTiff(xhr.response);
       };
+      xhr.onerror = function(){
+        status.innerText = "Error";
+      }
       xhr.send();
     }
   </script>
