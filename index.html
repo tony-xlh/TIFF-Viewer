@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>TIFF Viewer Example</title>
-  <script src="https://unpkg.com/dwt@18.0.0/dist/dynamsoft.webtwain.min.js"></script>
+  <script src="https://unpkg.com/dwt@18.0.2/dist/dynamsoft.webtwain.min.js"></script>
   <style>
     #dwtcontrolContainer {
       width: 270px;
@@ -19,18 +19,21 @@
   <script type="text/javascript">
     let DWObject;
     Dynamsoft.DWT.AutoLoad = false;
-    Dynamsoft.DWT.ResourcesPath = "https://unpkg.com/dwt@18.0.0/dist";
+    Dynamsoft.DWT.Containers = [];
+    Dynamsoft.DWT.ResourcesPath = "https://unpkg.com/dwt@18.0.2/dist";
     init();
     function init(){
-      Dynamsoft.DWT.Containers = [{ ContainerId: 'dwtcontrolContainer',Width: 270, Height: 350 }];
-      Dynamsoft.DWT.RegisterEvent('OnWebTwainReady', function () {
-        console.log("ready");
-        DWObject = Dynamsoft.DWT.GetWebTwain('dwtcontrolContainer');
-        DWObject.Viewer.width = "100%";
-        DWObject.Viewer.height = "100%";
-        DWObject.SetViewMode(1,1);
-      });
-      Dynamsoft.DWT.Load();
+      Dynamsoft.DWT.CreateDWTObjectEx({
+        WebTwainId: 'dwtcontrol'
+      },
+        function(obj) {
+          console.log(obj);
+          DWObject = obj;
+        },
+        function(err) {
+          console.log(err);
+        }
+      );
     }
 
     function tiffSelected(){
