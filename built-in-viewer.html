@@ -28,6 +28,7 @@
     </li>
   </ol>
   <div id="dwtcontrolContainer"></div>
+  <button onclick="showEditor();">Edit</button>
   <script type="text/javascript">
     let DWObject;
     Dynamsoft.DWT.AutoLoad = false;
@@ -89,6 +90,11 @@
         status.innerText = "Error";
       }
       xhr.send();
+    }
+
+    function showEditor(){
+      var imageEditor = DWObject.Viewer.createImageEditor();
+      imageEditor.show();
     }
   </script>
 </body>
